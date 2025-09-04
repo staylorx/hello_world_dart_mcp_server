@@ -2,54 +2,16 @@
 
 This document explains how to build the Hello World MCP Server for multiple platforms and architectures.
 
-## Automated Builds with GitHub Actions
+## Supported Platforms and Architectures
 
-The project includes a comprehensive GitHub Actions workflow that automatically builds binaries for all supported platforms and architectures.
-
-### Supported Platforms and Architectures
-
-| Platform | Architecture | Runner | Output File |
-|----------|-------------|---------|-------------|
-| Windows | AMD64 (x64) | `windows-latest` | `hello_world_mcp_server-windows-amd64.exe` |
-| Windows | ARM64 | `windows-latest` | `hello_world_mcp_server-windows-arm64.exe` |
-| Linux | AMD64 (x64) | `ubuntu-latest` | `hello_world_mcp_server-linux-amd64` |
-| Linux | ARM64 | `ubuntu-latest` | `hello_world_mcp_server-linux-arm64` |
-| macOS | AMD64 (Intel) | `macos-13` | `hello_world_mcp_server-macos-amd64` |
-| macOS | ARM64 (Apple Silicon) | `macos-latest` | `hello_world_mcp_server-macos-arm64` |
-
-### Workflow Triggers
-
-The build workflow is triggered by:
-
-1. **Push to main/develop branches** - Builds all platforms for testing
-2. **Pull requests to main** - Builds all platforms for validation
-3. **Release publication** - Builds all platforms and attaches binaries to the release
-
-### Build Process
-
-The workflow performs the following steps for each platform/architecture combination:
-
-1. **Setup Environment**
-   - Checkout source code
-   - Install Dart SDK with correct architecture
-   - Install project dependencies
-
-2. **Build Executable**
-   - Compile Dart source to native executable
-   - Verify the executable was created successfully
-
-3. **Create Artifacts**
-   - Package executable with platform-specific naming
-   - Upload as GitHub Actions artifacts (30-day retention)
-
-4. **Testing** (for non-release builds)
-   - Download and test the executable
-   - Verify basic MCP protocol functionality
-
-5. **Release** (for tagged releases only)
-   - Download all platform binaries
-   - Generate SHA256 checksums
-   - Attach all binaries and checksums to the GitHub release
+| Platform | Architecture | Output File |
+|----------|-------------|-------------|
+| Windows | AMD64 (x64) | `hello_world_mcp_server-windows-amd64.exe` |
+| Windows | ARM64 | `hello_world_mcp_server-windows-arm64.exe` |
+| Linux | AMD64 (x64) | `hello_world_mcp_server-linux-amd64` |
+| Linux | ARM64 | `hello_world_mcp_server-linux-arm64` |
+| macOS | AMD64 (Intel) | `hello_world_mcp_server-macos-amd64` |
+| macOS | ARM64 (Apple Silicon) | `hello_world_mcp_server-macos-arm64` |
 
 ## Manual Building
 
@@ -82,7 +44,7 @@ dart compile exe bin/hello_world_mcp_server.dart -o hello_world_mcp_server --tar
 dart compile exe bin/hello_world_mcp_server.dart -o hello_world_mcp_server --target-os=macos
 ```
 
-**Note:** For reliable cross-platform builds, use the GitHub Actions workflow or build on each target platform.
+**Note:** For reliable cross-platform builds, build on each target platform natively.
 
 ## Using Released Binaries
 
@@ -136,9 +98,8 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | ./hello_worl
 
 1. Make your code changes
 2. Test locally: `dart run bin/hello_world_mcp_server.dart`
-3. Commit and push to a feature branch
-4. Create a pull request - this triggers the build workflow
-5. Review the build results in the PR checks
+3. Build and test on target platforms
+4. Commit and push your changes
 
 ### Creating a Release
 
@@ -149,14 +110,14 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | ./hello_worl
    git tag v1.0.1
    git push origin v1.0.1
    ```
-4. Create a GitHub release from the tag
-5. The workflow will automatically build and attach binaries
+4. Build binaries for all target platforms
+5. Create a release and attach the built binaries
 
 ## Troubleshooting
 
 ### Build Failures
 
-- Check the GitHub Actions logs for specific error messages
+- Check build output for specific error messages
 - Ensure all dependencies are properly declared in [`pubspec.yaml`](pubspec.yaml)
 - Verify Dart SDK compatibility (minimum version 3.0.0)
 
@@ -176,7 +137,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | ./hello_worl
 
 When contributing:
 
-1. Ensure your changes don't break the build workflow
+1. Ensure your changes build successfully on target platforms
 2. Test on multiple platforms when possible
 3. Update this documentation if you modify the build process
 4. Follow semantic versioning for releases

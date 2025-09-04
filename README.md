@@ -208,11 +208,13 @@ This is a simple demonstration MCP server that shows how to implement basic tool
 hello-world-server/
 ├── bin/
 │   └── hello_world_mcp_server.dart  # Main server implementation
-├── .github/
-│   └── workflows/                   # GitHub Actions for automated builds
+├── dagger/
+│   └── build_script.py              # Dagger build script for multi-platform builds
+├── artifacts/                       # Build output directory (created by Dagger)
 ├── BUILD.md                         # Detailed build instructions
 ├── LICENSE                          # MIT License
 ├── pubspec.yaml                     # Dart project configuration
+├── pyproject.toml                   # Python project config for Dagger builds
 ├── README.md                        # This file
 └── .gitignore                       # Git ignore rules
 ```
@@ -232,8 +234,44 @@ dart run bin/hello_world_mcp_server.dart 2>debug.log
 
 ### Building
 
+#### Option 1: Using Dagger (Recommended)
+
+This project uses [Dagger](https://dagger.io/) for reproducible, containerized builds across all platforms.
+
+Note for Windows developers, Python is used for the dagger builds, but that piece is best done in 'nix.
+
+**Prerequisites:**
+- Python 3.11+
+- Docker (for Dagger)
+
+**Build all platforms:**
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Run the Dagger build script
+python build_script.py
+```
+
+This will build binaries for:
+- Windows (AMD64, ARM64)
+- Linux (AMD64, ARM64)
+- macOS/Darwin (AMD64, ARM64)
+
+All binaries will be saved to the `artifacts/` directory.
+
+**Using pyproject.toml:**
+```bash
+# Install in development mode
+pip install -e .
+
+# Run the build command
+build-binaries
+```
+
+#### Option 2: Manual Build
+
 See [BUILD.md](BUILD.md) for comprehensive build instructions, including:
-- Automated GitHub Actions builds
 - Manual compilation
 - Cross-platform building
 - Release process
