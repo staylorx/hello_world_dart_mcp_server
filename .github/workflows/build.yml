@@ -56,11 +56,37 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Dart SDK
-      uses: dart-lang/setup-dart@v1
-      with:
-        sdk: stable
-        architecture: ${{ matrix.dart-arch }}
+    - name: Setup Dart SDK (Manual Beta Channel)
+      run: |
+        if [ "${{ matrix.os }}" = "linux" ]; then
+          # Download specific beta version for Linux
+          if [ "${{ matrix.dart-arch }}" = "x64" ]; then
+            curl -L -o dart-sdk.zip https://storage.googleapis.com/dart-archive/channels/beta/release/3.9.2/sdk/dartsdk-linux-x64-release.zip
+          else
+            curl -L -o dart-sdk.zip https://storage.googleapis.com/dart-archive/channels/beta/release/3.9.2/sdk/dartsdk-linux-arm64-release.zip
+          fi
+          unzip dart-sdk.zip
+          echo "$PWD/dart-sdk/bin" >> $GITHUB_PATH
+        elif [ "${{ matrix.os }}" = "macos" ]; then
+          # Download specific beta version for macOS
+          if [ "${{ matrix.dart-arch }}" = "x64" ]; then
+            curl -L -o dart-sdk.zip https://storage.googleapis.com/dart-archive/channels/beta/release/3.9.2/sdk/dartsdk-macos-x64-release.zip
+          else
+            curl -L -o dart-sdk.zip https://storage.googleapis.com/dart-archive/channels/beta/release/3.9.2/sdk/dartsdk-macos-arm64-release.zip
+          fi
+          unzip dart-sdk.zip
+          echo "$PWD/dart-sdk/bin" >> $GITHUB_PATH
+        else
+          # Windows
+          if [ "${{ matrix.dart-arch }}" = "x64" ]; then
+            curl -L -o dart-sdk.zip https://storage.googleapis.com/dart-archive/channels/beta/release/3.9.2/sdk/dartsdk-windows-x64-release.zip
+          else
+            curl -L -o dart-sdk.zip https://storage.googleapis.com/dart-archive/channels/beta/release/3.9.2/sdk/dartsdk-windows-arm64-release.zip
+          fi
+          unzip dart-sdk.zip
+          echo "$PWD/dart-sdk/bin" >> $GITHUB_PATH
+        fi
+      shell: bash
 
     - name: Get dependencies
       run: dart pub get
